@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>T9</title>
+</head>
+<body>
+    <ul id="messages">
+
+    </ul>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        var socket = io();
+
+        $(document).keypress(function(event){
+            var digit = event.keyCode - 48;
+
+            if (digit <= 9 && digit >= 0) {
+                console.log(digit);
+                socket.emit('digitPressed', {digit: digit});
+            }
+        });
+
+        socket.on('message', function(msg){
+            $('#messages').append($('<li>').text(msg));
+        });
+    </script>
+</body>
+</html>
