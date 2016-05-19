@@ -40,12 +40,13 @@
 
             if (digit <= 9 && digit >= 0) {
                 console.log(digit);
-                socket.emit('digitPressed', {digit: digit});
+                socket.emit('digitPressed', digit);
             }
         });
 
         socket.on('message', function(msg){
-            $('#messages').append($('<li>').text(msg));
+            console.log(msg);
+            $('#messages').append($('<li>').text(msg.message));
         });
     </script>
 </body>

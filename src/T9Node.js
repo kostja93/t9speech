@@ -26,6 +26,15 @@ class T9Node {
         if (addToChildren)
             this.children.push(child);
     }
+
+    posibillity() {
+        var absolute = 0;
+        for(var i in this.parent.children) {
+            absolute += this.parent.children[i].count;
+        }
+
+        return this.count/absolute;
+    }
 }
 
 module.exports = T9Node;

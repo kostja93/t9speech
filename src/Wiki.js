@@ -29,7 +29,6 @@ class Wiki {
 
     learning(learningStr) {
         for(var i = 0; i < (learningStr.length - this.DEPTH); i++) {
-            console.log(learningStr.substr(i, this.DEPTH));
             Wiki.traversLearn(this.rootNode, learningStr.substr(i, this.DEPTH));
         }
     }
@@ -45,7 +44,9 @@ class Wiki {
     }
 
     load() {
-        request("https://en.wikipedia.org/wiki/Celtic_neopaganism", {}, this.loadLearning.bind(this));
+        request("https://en.wikipedia.org/wiki/World_War_II", {}, this.loadLearning.bind(this));
+        request("https://en.wikipedia.org/wiki/Computer_graphics", {}, this.loadLearning.bind(this));
+        request("https://en.wikipedia.org/wiki/Mary_Hanford_Ford", {}, this.loadLearning.bind(this));
     }
 }
 
