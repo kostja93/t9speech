@@ -6,14 +6,16 @@ var T9Node = require('./T9Node');
 class Wiki {
     constructor(rootNode) {
         this.load();
-        this.keyMap = require('./T9Map');
         this.rootNode = rootNode;
+
+        this.DEPTH = 3;
     }
 
     prepareString($) {
         var learnString = $('body').text().toString().replace(/(\t)/g, '');
         learnString = learnString.replace(/(\n)/g, ' ');
         learnString = learnString.replace(/( )+/g, ' ');
+        learnString = learnString.replace(/[^a-zA-Z0-9 .,]+/g, '');
 
         return learnString;
     }
@@ -26,10 +28,20 @@ class Wiki {
     }
 
     learning(learningStr) {
-        for(var i = 0; i < learningStr.length; i++) {
-            var char = learningStr[i];
-            this.rootNode.addChild(new T9Node(this.rootNode, char));
+        for(var i = 0; i < (learningStr.length - this.DEPTH); i++) {
+            console.log(learningStr.substr(i, this.DEPTH));
+            Wiki.traversLearn(this.rootNode, learningStr.substr(i, this.DEPTH));
         }
+    }
+
+    static traversLearn(node, learnString) {
+        var char = learnString[0];
+        var newNode = new T9Node(node, char);
+        if (learnString.length != 1) {
+            Wiki.traversLearn(newNode, learnString.substr(1));
+        }
+
+        node.addChild(newNode);
     }
 
     load() {
@@ -37,4 +49,4 @@ class Wiki {
     }
 }
 
-new Wiki();
+module.exports = Wiki;

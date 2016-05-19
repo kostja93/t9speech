@@ -1,3 +1,5 @@
+'use strict';
+
 class T9Node {
     constructor(parent, char, children, count) {
         this.parent = parent || null;
@@ -7,10 +9,23 @@ class T9Node {
     }
 
     addChild(child) {
-        this.children.forEach((kid) => {
-            if (kid.char == child.char) {
-                kid.count += child.count;
+        var addToChildren = true;
+
+        for(var i in this.children) {
+            if (child.char == this.children[i].char) {
+                this.children[i].count += child.count;
+
+                child.children.forEach((enkel) => {
+                    this.children[i].addChild(enkel);
+                });
+
+                addToChildren = false;
             }
-        });
+        }
+
+        if (addToChildren)
+            this.children.push(child);
     }
 }
+
+module.exports = T9Node;
