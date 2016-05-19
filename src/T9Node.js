@@ -1,7 +1,7 @@
 'use strict';
 
 class T9Node {
-    constructor(parent, char, children, count) {
+    constructor(parent, char, count, children) {
         this.parent = parent || null;
         this.char = char || "";
         this.children = children || [];
@@ -36,7 +36,7 @@ class T9Node {
         return before + this.char;
     }
 
-    possibility() {
+    probability() {
         var absolute = 0;
         if (this.parent)
             for(var i in this.parent.children) {

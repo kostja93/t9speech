@@ -46,7 +46,7 @@
 
         socket.on('message', function(msg){
 //            console.log(msg);
-//            $('#messages').html('');
+            $('#messages').html('');
             $('#messages').append($('<li>').text(msg.message + ' (' + msg.prob + ')'));
         });
     </script>

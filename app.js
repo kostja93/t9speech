@@ -16,15 +16,24 @@ function traverse(treeLeaf) {
         treeLeaf.children.forEach(traverse);
     } else {
         leafChars.forEach((leafChar) => {
-            treeLeaf.addChild(new T9Node(treeLeaf, leafChar));
+            treeLeaf.addChild(new T9Node(treeLeaf, leafChar, getCharCount(leafChar)));
         });
     }
+}
+
+function getCharCount(leafChar) {
+    for(var i in t9LearningTree.children) {
+        if (leafChar == t9LearningTree.children[i].char)
+            return t9LearningTree.children[i].count;
+    }
+
+    return 0;
 }
 
 var words = [];
 function messageString(t9Tree) {
     if (t9Tree.children.length <= 0)
-        words.push({message: t9Tree.word(), prob: t9Tree.possibility()});
+        words.push({message: t9Tree.word(), prob: t9Tree.probability()});
     else
         t9Tree.children.forEach(messageString);
 }
