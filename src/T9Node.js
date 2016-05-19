@@ -27,11 +27,23 @@ class T9Node {
             this.children.push(child);
     }
 
-    posibillity() {
-        var absolute = 0;
-        for(var i in this.parent.children) {
-            absolute += this.parent.children[i].count;
+    word() {
+        var before = "";
+        if (this.parent) {
+            before = this.parent.word();
         }
+
+        return before + this.char;
+    }
+
+    possibility() {
+        var absolute = 0;
+        if (this.parent)
+            for(var i in this.parent.children) {
+                absolute += this.parent.children[i].count;
+            }
+        else
+            return 1;
 
         return this.count/absolute;
     }

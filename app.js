@@ -21,13 +21,12 @@ function traverse(treeLeaf) {
     }
 }
 
-var lastLeaf = null;
+var words = [];
 function messageString(t9Tree) {
-    lastLeaf = t9Tree.count;
     if (t9Tree.children.length <= 0)
-        return  t9Tree.char;
+        words.push({message: t9Tree.word(), prob: t9Tree.possibility()});
     else
-        return t9Tree.char + messageString(t9Tree.children[0]);
+        t9Tree.children.forEach(messageString);
 }
 
 app.get('/', function(req, res){
@@ -42,8 +41,10 @@ io.on('connection', function(socket){
         if (leafChars)
             traverse(t9InputTree);
 
-        var message = messageString(t9InputTree);
-        socket.emit('message', {message, lastLeaf});
+        messageString(t9InputTree);
+        words.forEach(function (word) {
+            socket.emit('message', word);
+        })
     });
 });
 
