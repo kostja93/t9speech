@@ -8,6 +8,16 @@ class T9Node {
         this.count = count || 1;
     }
 
+    getChild(char) {
+        for(var i in this.children) {
+            if (this.children[i].char == char) {
+                return this.children[i];
+            }
+        }
+
+        return new T9Node(this, '', 0);
+    }
+
     addChild(child) {
         var addToChildren = true;
 

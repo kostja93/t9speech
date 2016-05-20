@@ -51,9 +51,7 @@ io.on('connection', function(socket){
             traverse(t9InputTree);
 
         messageString(t9InputTree);
-        words.forEach(function (word) {
-            socket.emit('message', word);
-        })
+        socket.emit('message', words[Math.ceil(Math.random()*words.length -1)]);
     });
 });
 
