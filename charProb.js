@@ -23,10 +23,10 @@ function fullCharCount() {
 }
 
 function calcProbability(string) {
-    var prob = -Math.log(getCharCount(string[0])/fullCharCount());
+    var prob = (getCharCount(string[0])/fullCharCount());
 
     if(string.length > 1)
-        prob += calcProbability(string.substr(1));
+        prob *= calcProbability(string.substr(1));
 
     return prob;
 }
@@ -59,16 +59,18 @@ function realProb(string) {
 }
 
 setTimeout(function () {
-    var prob = calcProbability("e");
+    var prob = calcProbability("t");
+    console.log(prob)
+    prob = calcProbability("z");
     console.log(prob);
 
-    prob = calcProbability("ec");
+    prob = calcProbability("th");
     console.log(prob);
 
-    prob = ConditionedProbability("ec");
+    prob = ConditionedProbability("th");
     console.log(prob);
 
     realProb("Did it ever rain in Steinfurt");
     realProb("Steinfurt");
     realProb("World War");
-}, 5000);
+}, 10000);
