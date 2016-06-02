@@ -74,3 +74,24 @@ setTimeout(function () {
     realProb("Steinfurt");
     realProb("World War");
 }, 10000);
+
+function charToT9(string) {
+    var result = "";
+
+    for (var i = 0; i < string.length; i++) {
+        result += getT9(string[i]);
+    }
+
+    return result;
+}
+
+function getT9(char) {
+    var map = require('./src/T9Map');
+
+    for(var i = 0; i < map.length; i++) {
+        if (map[i].indexOf(char) != -1)
+            return i;
+    }
+
+    throw "No valid char given";
+}
