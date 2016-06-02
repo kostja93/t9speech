@@ -6,12 +6,19 @@ var T9Node = require('./T9Node');
 
 class Wiki extends EventEmitter{
     constructor(rootNode) {
+        super();
         this.load();
         this.rootNode = rootNode;
 
         this.DEPTH = 3;
+        this.documentsCount = 0;
 
-        this.on('')
+        this.on('done', () => {
+            this.documentsCount++;
+            if(this.documentsCount == 3) {
+                this.emit('ready');
+            }
+        });
     }
 
     static prepareString($) {
@@ -24,6 +31,7 @@ class Wiki extends EventEmitter{
     }
 
     loadLearning(err, res, html) {
+        if (err) return null;
         var $ = cheerio.load(html);
         var learnString = Wiki.prepareString($);
 
@@ -34,7 +42,7 @@ class Wiki extends EventEmitter{
         for(var i = 0; i < (learningStr.length - this.DEPTH); i++) {
             Wiki.traversLearn(this.rootNode, learningStr.substr(i, this.DEPTH));
         }
-        this.emit('doneLearning');
+        this.emit('done');
     }
 
     static traversLearn(node, learnString) {

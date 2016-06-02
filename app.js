@@ -8,7 +8,7 @@ var t9Map = require('./src/T9Map');
 var t9InputTree = new T9Node(null);
 var t9LearningTree = new T9Node(null);
 
-new Learning(t9LearningTree);
+var learningEvent = new Learning(t9LearningTree);
 
 var leafChars = [];
 function traverse(treeLeaf) {
@@ -38,23 +38,25 @@ function messageString(t9Tree) {
         t9Tree.children.forEach(messageString);
 }
 
-app.get('/', function(req, res){
-    res.sendFile(__dirname + '/public/index.html');
-});
-
-io.on('connection', function(socket){
-    console.log("New user");
-
-    socket.on('digitPressed', function (digit) {
-        leafChars = t9Map[digit];
-        if (leafChars)
-            traverse(t9InputTree);
-
-        messageString(t9InputTree);
-        socket.emit('message', words[Math.ceil(Math.random()*words.length -1)]);
+learningEvent.on('ready', function () {
+    app.get('/', function(req, res){
+        res.sendFile(__dirname + '/public/index.html');
     });
-});
 
-http.listen(3000, function(){
-    console.log('listening on *:3000');
+    io.on('connection', function(socket){
+        console.log("New user");
+
+        socket.on('digitPressed', function (digit) {
+            leafChars = t9Map[digit];
+            if (leafChars)
+                traverse(t9InputTree);
+
+            messageString(t9InputTree);
+            socket.emit('message', words[Math.ceil(Math.random()*words.length -1)]);
+        });
+    });
+
+    http.listen(3000, function(){
+        console.log('listening on *:3000');
+    });
 });
