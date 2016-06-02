@@ -3,7 +3,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var T9Node = require('./src/T9Node');
 var Learning = require('./src/Wiki');
-var t9Map = require('./src/T9Map');
+var t9Map = require('./src/T9Map').map;
 
 var t9InputTree = new T9Node(null);
 var t9LearningTree = new T9Node(null);
