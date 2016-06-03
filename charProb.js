@@ -32,7 +32,7 @@ function calcProbability(string) {
 }
 
 function ConditionedProbability(string) {
-    return calcProbability(string) / calcProbability(string.substr(0, string.length -1));
+    return realProb(string) / realProb(string.substr(0, string.length -1));
 }
 
 function realProb(string) {

@@ -6,6 +6,8 @@ class T9Node {
         this.char = char || "";
         this.children = children || [];
         this.count = count || 1;
+
+        this.prob = 0;
     }
 
     getChild(char) {
@@ -47,15 +49,7 @@ class T9Node {
     }
 
     probability() {
-        var absolute = 0;
-        if (this.parent)
-            for(var i in this.parent.children) {
-                absolute += this.parent.children[i].count;
-            }
-        else
-            return 1;
-
-        return this.count/absolute;
+        return this.prob;
     }
 }
 
