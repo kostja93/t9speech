@@ -4,11 +4,13 @@ var io = require('socket.io')(http);
 var T9Node = require('./src/T9Node');
 var Learning = require('./src/Wiki');
 var t9Map = require('./src/T9Map').map;
+var Probability = require('./src/Probability');
 
 var t9InputTree = new T9Node(null);
 var t9LearningTree = new T9Node(null);
 
 var learningEvent = new Learning(t9LearningTree);
+var probability;
 
 var leafChars = [];
 function traverse(treeLeaf) {
@@ -18,55 +20,32 @@ function traverse(treeLeaf) {
         leafChars.forEach((leafChar) => {
             var newLeaf = new T9Node(treeLeaf, leafChar);
             var word = newLeaf.word();
-            newLeaf.prob = realProb(word) * ConditionedProbability(word);
+            newLeaf.prob = probability.realProb(word) * probability.conditionedProbability(word);
+
             treeLeaf.addChild(newLeaf);
         });
     }
 }
 
-function realProb(string) {
-    var probability = 1;
+function filter() {
+    words.sort(function(a, b) {
+        return b.prob - a.prob;
+    });
 
-    for(var i = 0; i < string.length; i++) {
-        var countZahler = 0;
-        var countNenner = 1;
-        if(i == 0) {
-            countZahler = t9LearningTree.getChild(string[i]).count;
-            countNenner = fullCharCount();
-        } else if(i == 1) {
-            countZahler = t9LearningTree.getChild(string[i-1]).getChild(string[i]).count;
-            countNenner = t9LearningTree.getChild(string[i-1]).count;
-        } else {
-            countZahler = t9LearningTree.getChild(string[i-2]).getChild(string[i-1]).getChild(string[i]).count;
-            countNenner = t9LearningTree.getChild(string[i-2]).getChild(string[i-1]).count;
+    if (words.length > 10) {
+        var minProb = words[9].prob;
+        for(var i = 10; i < words.length; i++) {
+            words[i].leaf.parent.children = words[i].leaf.parent.children.filter(function(leaf) {
+                return leaf.probability() > minProb;
+            });
         }
-
-        if ( countNenner != 0 )
-            probability *= (countZahler/countNenner);
-        else
-            return 0;
     }
-
-    return probability;
-}
-
-function ConditionedProbability(string) {
-    return realProb(string) / realProb(string.substr(0, string.length -1));
-}
-
-function fullCharCount() {
-    var sum = 0;
-    for(var i in t9LearningTree.children) {
-        sum += t9LearningTree.children[i].count;
-    }
-
-    return sum;
 }
 
 var words = [];
 function messageString(t9Tree) {
     if (t9Tree.children.length <= 0) {
-        var newWord = {message: t9Tree.word(), prob: t9Tree.probability()};
+        var newWord = {message: t9Tree.word(), prob: t9Tree.probability(), leaf: t9Tree};
         words.push(newWord);
     }
     else
@@ -74,13 +53,7 @@ function messageString(t9Tree) {
 }
 
 learningEvent.on('ready', function () {
-    console.log(realProb("the"));
-    console.log(ConditionedProbability("the"));
-    console.log(realProb("th"));
-
-    console.log(realProb("Did it ever rain in Steinfurt"));
-    console.log(realProb("Steinfurt"));
-    console.log(realProb("World War"));
+    probability = new Probability(t9LearningTree);
 
     app.get('/', function(req, res){
         res.sendFile(__dirname + '/public/index.html');
@@ -91,19 +64,27 @@ learningEvent.on('ready', function () {
 
         socket.on('digitPressed', function (digit) {
             words = [];
+            var minProb = 3;
             leafChars = t9Map[digit];
             if (leafChars)
                 traverse(t9InputTree);
 
             messageString(t9InputTree);
 
-            words = words.filter(function (a) {
-                return a.prob != 0;
-            });
             words.sort(function(a, b) {
                 return b.prob - a.prob;
             });
-            socket.emit('message', words[0]);
+            if (words.length > 10) {
+                minProb = words[9].prob;
+                words = words.filter(function (word) {
+                    return word.prob > minProb;
+                });
+            }
+
+            words.forEach(function (word) {
+                socket.emit('message', {message: word.message, prob: word.prob});
+            });
+            socket.emit('message', {message: "MinProb", prob: minProb});
         });
     });
 

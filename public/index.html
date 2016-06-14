@@ -37,7 +37,7 @@
 
         $(document).keypress(function(event){
             var digit = event.keyCode - 48;
-
+            $('#messages').html('');
             if (digit <= 9 && digit >= 0) {
                 console.log(digit);
                 socket.emit('digitPressed', digit);
@@ -45,11 +45,8 @@
         });
 
         socket.on('message', function(msg){
-//            console.log(msg);
-            $('#messages').html('');
-//            msgs.forEach(function (msg) {
-                $('#messages').append($('<li>').text(msg.message + ' (' + msg.prob + ')'));
-//            });
+            $('#messages').append($('<li>')
+                    .text( msg.message + ' (' + msg.prob + ')'));
         });
     </script>
 </body>

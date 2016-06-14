@@ -51,6 +51,15 @@ class T9Node {
     probability() {
         return this.prob;
     }
+
+    fullCharCount() {
+        var sum = 0;
+        for(var i in this.children) {
+            sum += this.children[i].count;
+        }
+
+        return sum;
+    }
 }
 
 module.exports = T9Node;
