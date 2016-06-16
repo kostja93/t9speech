@@ -49,6 +49,10 @@ class WordTreeBuilder {
         }
     }
 
+    getWord() {
+        return this.getWords()[0].message;
+    }
+
     getWords() {
         this.words = [];
         this.messageString(this.inputTreeRoot);

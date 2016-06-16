@@ -13,6 +13,8 @@ class Wiki extends EventEmitter{
         this.DEPTH = 3;
         this.documentsCount = 0;
 
+        this.learnStrings = [];
+
         this.on('done', () => {
             this.documentsCount++;
             if(this.documentsCount == 3) {
@@ -35,6 +37,7 @@ class Wiki extends EventEmitter{
         var $ = cheerio.load(html);
         var learnString = Wiki.prepareString($);
 
+        this.learnStrings.push(learnString);
         this.learning(learnString);
     }
 
