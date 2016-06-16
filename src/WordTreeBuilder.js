@@ -10,6 +10,7 @@ class WordTreeBuilder {
 
         this.leafChars = [];
         this.leafNodes = [];
+        this.words = [];
     }
 
     addChars(leafChars) {
@@ -48,21 +49,26 @@ class WordTreeBuilder {
 
             var filterMinProb = this.leafNodes[10].probability();
             for(var i = 10; i < this.leafNodes.length; i++) {
-                this.leafNodes[i].parent.children = this.leafNodes[i].parent.children.filter(filterCond);
+                this.leafNodes[i].deletePath();
             }
             this.leafNodes = this.leafNodes.filter(filterCond);
         }
     }
 
     getWords() {
-        console.log("Amount of leaf notes",this.leafNodes.length);
-        var words = [];
-
-        this.leafNodes.forEach(function (node) {
-            words.push({message: node.word(), prob: node.probability()});
+        this.words = [];
+        this.messageString(this.inputTreeRoot);
+        this.words.sort(function(wordA, wordB) {
+            return wordB.prob - wordA.prob;
         });
+        return this.words;
+    }
 
-        return words;
+    messageString(t9Tree) {
+        if (t9Tree.children.length <= 0)
+            this.words.push({message: t9Tree.word(), prob: t9Tree.probability()});
+        else
+            t9Tree.children.forEach(this.messageString.bind(this));
     }
 }
 

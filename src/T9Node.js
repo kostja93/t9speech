@@ -60,6 +60,15 @@ class T9Node {
 
         return sum;
     }
+    
+    deletePath() {
+        this.parent.children = this.parent.children.filter((sibling) => {
+            return sibling.char != this.char;
+        });
+
+        if(this.parent.children.length == 0)
+            this.parent.deletePath();
+    }
 }
 
 module.exports = T9Node;
