@@ -31,8 +31,10 @@ class WordTreeBuilder {
                 var word = newLeaf.word();
                 newLeaf.prob =  this.probFct.realProb(word); //* this.probFct.conditionedProbability(word);
 
-                treeLeaf.addChild(newLeaf);
-                this.leafNodes.push(newLeaf);
+                if (newLeaf.prob != Infinity && newLeaf != 0) {
+                    treeLeaf.addChild(newLeaf);
+                    this.leafNodes.push(newLeaf);
+                }
             });
         } else {
             treeLeaf.children.forEach(this.traverse.bind(this));
@@ -40,13 +42,42 @@ class WordTreeBuilder {
     }
 
     filterLeafs() {
+        var bestPaths = [], alsoGoodPaths = this.leafNodes;
+        this.leafChars.forEach((char) => {
+            var bestPathsForChar = [];
+            this.leafNodes.forEach(function (leafNode) {
+                if (leafNode.char == char)
+                    bestPathsForChar.push(leafNode);
+            });
+            bestPathsForChar.sort(WordTreeBuilder.sorting);
+            bestPaths.push(bestPathsForChar[0]);
+        });
+
         if (this.leafNodes.length >= this.K) {
             this.leafNodes.sort(WordTreeBuilder.sorting);
+            alsoGoodPaths = [];
 
-            for(var i = this.K; i < this.leafNodes.length; i++) {
+            for(var i = 0; i < this.K; i++) {
+                alsoGoodPaths.push(this.leafNodes[i]);
+            }
+
+            for(i = this.K; i < this.leafNodes.length; i++) {
                 this.leafNodes[i].deletePath();
             }
         }
+
+        alsoGoodPaths.forEach((node) => {
+            var inGoodNodes = false;
+            bestPaths.forEach((leafNode) => {
+                if (node == leafNode)
+                    inGoodNodes = true;
+            });
+
+            if(!inGoodNodes) {
+                node.deletePath();
+            }
+        });
+
     }
 
     getWord() {
