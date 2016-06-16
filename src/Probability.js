@@ -6,7 +6,7 @@ class Probability {
     }
 
     realProb(string) {
-        var probability = 1;
+        var probability = 0;
 
         for(var i = 0; i < string.length; i++) {
             var countZahler = 0;
@@ -23,9 +23,9 @@ class Probability {
             }
 
             if ( countNenner != 0 )
-                probability *= (countZahler/countNenner);
+                probability += -Math.log(countZahler/countNenner);
             else
-                return -Infinity;
+                return Infinity;
         }
 
         return probability;

@@ -11,6 +11,8 @@ class WordTreeBuilder {
         this.leafChars = [];
         this.leafNodes = [];
         this.words = [];
+
+        this.K = 10;
     }
 
     addChars(leafChars) {
@@ -27,7 +29,7 @@ class WordTreeBuilder {
             this.leafChars.forEach((leafChar) => {
                 var newLeaf = new T9Node(treeLeaf, leafChar);
                 var word = newLeaf.word();
-                newLeaf.prob = this.probFct.realProb(word) * this.probFct.conditionedProbability(word);
+                newLeaf.prob =  this.probFct.realProb(word); //* this.probFct.conditionedProbability(word);
 
                 treeLeaf.addChild(newLeaf);
                 this.leafNodes.push(newLeaf);
@@ -38,29 +40,19 @@ class WordTreeBuilder {
     }
 
     filterLeafs() {
-        var filterCond = function (node) {
-            return node.probability() > filterMinProb;
-        };
+        if (this.leafNodes.length >= this.K) {
+            this.leafNodes.sort(WordTreeBuilder.sorting);
 
-        if (this.leafNodes.length >= 10) {
-            this.leafNodes.sort(function (leafA, leafB) {
-                return leafB.probability() - leafA.probability();
-            });
-
-            var filterMinProb = this.leafNodes[10].probability();
-            for(var i = 10; i < this.leafNodes.length; i++) {
+            for(var i = this.K; i < this.leafNodes.length; i++) {
                 this.leafNodes[i].deletePath();
             }
-            this.leafNodes = this.leafNodes.filter(filterCond);
         }
     }
 
     getWords() {
         this.words = [];
         this.messageString(this.inputTreeRoot);
-        this.words.sort(function(wordA, wordB) {
-            return wordB.prob - wordA.prob;
-        });
+        this.words.sort(WordTreeBuilder.sorting);
         return this.words;
     }
 
@@ -69,6 +61,10 @@ class WordTreeBuilder {
             this.words.push({message: t9Tree.word(), prob: t9Tree.probability()});
         else
             t9Tree.children.forEach(this.messageString.bind(this));
+    }
+
+    static sorting(wordA, wordB) {
+        return wordA.prob - wordB.prob;
     }
 }
 
