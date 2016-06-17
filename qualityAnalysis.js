@@ -35,7 +35,7 @@ function printResult(string, diff) {
 learningEvent.on('ready', function () {
     console.log("Ready");
 
-    var string = learningEvent.learnStrings[0].substr(0, 10);
+    var string = learningEvent.learnStrings[0].substr(0, 100);
     console.log("Starting Analysing");
     inputTree = new InputTreeBuilder(t9LearningTree);
     var t9Input = t9Mapper.charToT9(string);

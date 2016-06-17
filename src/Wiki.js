@@ -5,12 +5,13 @@ var cheerio = require('cheerio');
 var T9Node = require('./T9Node');
 
 class Wiki extends EventEmitter{
+
     constructor(rootNode) {
         super();
         this.load();
         this.rootNode = rootNode;
 
-        this.DEPTH = 3;
+        this.DEPTH = 5;
         this.documentsCount = 0;
 
         this.learnStrings = [];

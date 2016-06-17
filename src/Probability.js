@@ -1,4 +1,5 @@
 'use strict';
+var Wiki = require('./Wiki');
 
 class Probability {
     constructor(learnedTree) {
@@ -11,15 +12,13 @@ class Probability {
         for(var i = 0; i < string.length; i++) {
             var countZahler = 0;
             var countNenner = 1;
+
             if(i == 0) {
                 countZahler = this.learningTree.getChild(string[i]).count;
                 countNenner = this.learningTree.fullCharCount();
-            } else if(i == 1) {
-                countZahler = this.learningTree.getChild(string[i-1]).getChild(string[i]).count;
-                countNenner = this.learningTree.getChild(string[i-1]).count;
             } else {
-                countZahler = this.learningTree.getChild(string[i-2]).getChild(string[i-1]).getChild(string[i]).count;
-                countNenner = this.learningTree.getChild(string[i-2]).getChild(string[i-1]).count;
+                countZahler = this.getChild(string, i, 0).count;
+                countNenner = this.getChild(string, i-1, 0).count;
             }
 
             if ( countNenner != 0 )
@@ -31,13 +30,17 @@ class Probability {
         return probability;
     }
 
-    getChild(treeLeaf, string, position) {
-        getChild(position)
+    getChild(string, position, depth) {
+        depth = depth || 1;
+        if (position <= 0 || depth >= 5)
+            return this.learningTree.getChild(string[0]);
+        return this.getChild(string, position-1, depth+1).getChild(string[position]);
     }
 
     conditionedProbability(string) {
-        var condition = this.realProb(string.substr(0, string.length -1)) ;
-        return (this.realProb(string) / condition);
+        var condition = Math.exp(-this.realProb(string.substr(0, string.length -1)));
+        var prob = Math.exp(-this.realProb(string));
+        return -Math.log( prob / condition);
     }
 }
 

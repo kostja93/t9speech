@@ -29,7 +29,7 @@ class WordTreeBuilder {
             this.leafChars.forEach((leafChar) => {
                 var newLeaf = new T9Node(treeLeaf, leafChar);
                 var word = newLeaf.word();
-                newLeaf.prob =  this.probFct.realProb(word); //* this.probFct.conditionedProbability(word);
+                newLeaf.prob =  newLeaf.parent.prob + this.probFct.realProb(word.substr(word.length-2)) + this.probFct.conditionedProbability(word);
 
                 if (newLeaf.prob != Infinity && newLeaf != 0) {
                     treeLeaf.addChild(newLeaf);
