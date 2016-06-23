@@ -18,7 +18,7 @@ class Wiki extends EventEmitter{
 
         this.on('done', () => {
             this.documentsCount++;
-            if(this.documentsCount == 3) {
+            if(this.documentsCount == 5) {
                 this.emit('ready');
             }
         });
@@ -63,6 +63,8 @@ class Wiki extends EventEmitter{
         request("https://en.wikipedia.org/wiki/World_War_II", {}, this.loadLearning.bind(this));
         request("https://en.wikipedia.org/wiki/Computer_graphics", {}, this.loadLearning.bind(this));
         request("https://en.wikipedia.org/wiki/Mary_Hanford_Ford", {}, this.loadLearning.bind(this));
+        request("https://en.wikipedia.org/wiki/Morning", {}, this.loadLearning.bind(this));
+        request("https://de.wikipedia.org/wiki/Goodgame_Studios", {}, this.loadLearning.bind(this));
     }
 }
 

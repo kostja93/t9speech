@@ -25,6 +25,14 @@ learningEvent.on('ready', function () {
             inputTree.getWords().forEach(function (word) {
                 socket.emit('message', {message: word.message, prob: word.prob});
             });
+
+            inputTree.bestPaths.forEach(function (word) {
+                socket.emit('debug', word);
+            });
+
+            inputTree.goodNotes.forEach(function (word) {
+                socket.emit('debug_2', word);
+            });
         });
     });
 

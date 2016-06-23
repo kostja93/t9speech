@@ -5,9 +5,14 @@
     <title>T9</title>
 </head>
 <body>
+    <h1>Words</h1>
     <ul id="messages">
 
     </ul>
+    <h1>Debug</h1>
+    <ul id="debug"></ul>
+    <h1>Debug 2</h1>
+    <ul id="debug2"></ul>
     <table>
         <tr>
             <td><button>1<br>. , 1</button></td>
@@ -38,6 +43,7 @@
         $(document).keypress(function(event){
             var digit = event.keyCode - 48;
             $('#messages').html('');
+            $('#debug').html('');
             if (digit <= 9 && digit >= 0) {
                 console.log(digit);
                 socket.emit('digitPressed', digit);
@@ -48,6 +54,14 @@
             $('#messages').append($('<li>')
                     .text( msg.message + ' (' + msg.prob + ')'));
         });
+
+        socket.on('debug', function (word) {
+            $('#debug').append($('<li>').text(word));
+        });
+
+        socket.on('debug_2', function (word) {
+            $('#debug2').append($('<li>').text(word));
+        })
     </script>
 </body>
 </html>

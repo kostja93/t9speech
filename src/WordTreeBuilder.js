@@ -10,13 +10,19 @@ class WordTreeBuilder {
 
         this.leafChars = [];
         this.leafNodes = [];
+        this.prevLeafs = [];
         this.words = [];
 
         this.K = 10;
+        this.depth = 3;
+        this.bestPaths = [];
+        this.alsoGoodPaths = [];
+        this.goodNotes = [];
     }
 
     addChars(leafChars) {
         this.leafChars = leafChars;
+        this.prevLeafs = this.leafNodes;
         this.leafNodes = [];
         if (leafChars)
             this.traverse(this.inputTreeRoot);
@@ -29,7 +35,18 @@ class WordTreeBuilder {
             this.leafChars.forEach((leafChar) => {
                 var newLeaf = new T9Node(treeLeaf, leafChar);
                 var word = newLeaf.word();
-                newLeaf.prob =  newLeaf.parent.prob + this.probFct.realProb(word.substr(word.length-2)) + this.probFct.conditionedProbability(word);
+                var parentProb = 0;
+                var condProb = 0;
+
+                if (word.length > this.depth) {
+                    word = word.substr(word.length - this.depth);
+                    condProb = this.probFct.conditionedProbability(word);
+                }
+                if (newLeaf.parent) {
+                    parentProb = newLeaf.parent.prob;
+                }
+
+                newLeaf.prob = parentProb + this.probFct.realProb(word) + condProb;
 
                 if (newLeaf.prob != Infinity && newLeaf != 0) {
                     treeLeaf.addChild(newLeaf);
@@ -42,23 +59,33 @@ class WordTreeBuilder {
     }
 
     filterLeafs() {
-        var bestPaths = [], alsoGoodPaths = this.leafNodes;
+        this.alsoGoodPaths = [];//this.leafNodes;
+        this.bestPaths = [];
         this.leafChars.forEach((char) => {
             var bestPathsForChar = [];
             this.leafNodes.forEach(function (leafNode) {
                 if (leafNode.char == char)
-                    bestPathsForChar.push(leafNode);
+                    bestPathsForChar.push(leafNode.word());
             });
             bestPathsForChar.sort(WordTreeBuilder.sorting);
-            bestPaths.push(bestPathsForChar[0]);
+            this.bestPaths.push(bestPathsForChar[0]);
         });
+
+        //this.leafNodes.forEach((node) => {
+        //    if (!node.parent) return;
+        //
+        //    var bestPathsForChar = node.parent.children;
+        //    bestPathsForChar.sort(WordTreeBuilder.sorting);
+        //    bestPaths.push(bestPathsForChar[0]);
+        //});
+
 
         if (this.leafNodes.length >= this.K) {
             this.leafNodes.sort(WordTreeBuilder.sorting);
-            alsoGoodPaths = [];
+            this.alsoGoodPaths = [];
 
             for(var i = 0; i < this.K; i++) {
-                alsoGoodPaths.push(this.leafNodes[i]);
+                this.alsoGoodPaths.push(this.leafNodes[i].word());
             }
 
             for(i = this.K; i < this.leafNodes.length; i++) {
@@ -66,15 +93,16 @@ class WordTreeBuilder {
             }
         }
 
-        alsoGoodPaths.forEach((node) => {
+        this.goodNotes = [];
+        this.alsoGoodPaths.forEach((node) => {
             var inGoodNodes = false;
-            bestPaths.forEach((leafNode) => {
+            this.bestPaths.forEach((leafNode) => {
                 if (node == leafNode)
                     inGoodNodes = true;
             });
 
-            if(!inGoodNodes) {
-                node.deletePath();
+            if(inGoodNodes) {
+                this.goodNotes.push(node);
             }
         });
 
