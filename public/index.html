@@ -9,10 +9,10 @@
     <ul id="messages">
 
     </ul>
-    <h1>Debug</h1>
-    <ul id="debug"></ul>
     <h1>Debug 2</h1>
     <ul id="debug2"></ul>
+    <h1>Debug</h1>
+    <ul id="debug"></ul>
     <table>
         <tr>
             <td><button>1<br>. , 1</button></td>
@@ -44,6 +44,7 @@
             var digit = event.keyCode - 48;
             $('#messages').html('');
             $('#debug').html('');
+            $('#debug2').html('');
             if (digit <= 9 && digit >= 0) {
                 console.log(digit);
                 socket.emit('digitPressed', digit);

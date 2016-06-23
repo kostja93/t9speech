@@ -13,8 +13,8 @@ class WordTreeBuilder {
         this.prevLeafs = [];
         this.words = [];
 
-        this.K = 10;
-        this.depth = 3;
+        this.K = 20;
+        this.depth = 4;
         this.bestPaths = [];
         this.alsoGoodPaths = [];
         this.goodNotes = [];
@@ -31,7 +31,7 @@ class WordTreeBuilder {
     }
 
     traverse(treeLeaf) {
-        if (treeLeaf.children.length <= 0) {
+        if (treeLeaf.children.length <= 0 && treeLeaf.isActive()) {
             this.leafChars.forEach((leafChar) => {
                 var newLeaf = new T9Node(treeLeaf, leafChar);
                 var word = newLeaf.word();
@@ -61,16 +61,18 @@ class WordTreeBuilder {
     filterLeafs() {
         this.alsoGoodPaths = [];//this.leafNodes;
         this.bestPaths = [];
-        this.leafChars.forEach((char) => {
-            var bestPathsForChar = [];
-            this.leafNodes.forEach(function (leafNode) {//TODO: prevNodes
-                if (leafNode.char == char)
-                    bestPathsForChar.push(leafNode);
-            });
-            bestPathsForChar.sort(WordTreeBuilder.sorting);
-            this.bestPaths.push(bestPathsForChar[0]);
-        });
 
+        this.leafNodes.forEach((node) => {
+            var bestPathsForParent = [];
+
+            if (node.parent.parent) {
+                node.parent.children.forEach((sibling) => {
+                    bestPathsForParent.push(sibling);
+                });
+                bestPathsForParent.sort(WordTreeBuilder.sorting);
+                this.bestPaths.push(bestPathsForParent[0]);
+            }
+        });
 
         if (this.leafNodes.length >= this.K) {
             this.leafNodes.sort(WordTreeBuilder.sorting);
@@ -81,7 +83,7 @@ class WordTreeBuilder {
             }
 
             for(i = this.K; i < this.leafNodes.length; i++) {
-                //this.leafNodes[i].deletePath();
+                this.leafNodes[i].deletePath();
             }
         }
 
@@ -93,12 +95,9 @@ class WordTreeBuilder {
                     inGoodNodes = true;
             });
 
-            if(inGoodNodes) {
-                this.goodNotes.push(node);
+            if(!inGoodNodes) {
+                node.setInActive();
             }
-
-            if(!inGoodNodes){}
-                //node.deletePath();
         });
 
     }
@@ -109,7 +108,10 @@ class WordTreeBuilder {
 
     getWords() {
         this.words = [];
-        this.messageString(this.inputTreeRoot);
+        //this.messageString(this.inputTreeRoot);
+        this.leafNodes.forEach((node) => {
+            this.words.push({message: node.word(), prob: node.probability()});
+        });
         this.words.sort(WordTreeBuilder.sorting);
         return this.words;
     }

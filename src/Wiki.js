@@ -65,6 +65,11 @@ class Wiki extends EventEmitter{
         request("https://en.wikipedia.org/wiki/Mary_Hanford_Ford", {}, this.loadLearning.bind(this));
         request("https://en.wikipedia.org/wiki/Morning", {}, this.loadLearning.bind(this));
         request("https://de.wikipedia.org/wiki/Goodgame_Studios", {}, this.loadLearning.bind(this));
+        //request("https://en.wikipedia.org/wiki/Mexican_settlement_in_the_Philippines", {}, this.loadLearning.bind(this));
+        //request("https://en.wikipedia.org/wiki/Downshifting", {}, this.loadLearning.bind(this));
+        //request("https://en.wikipedia.org/wiki/Gerrit_Rietveld_Academie", {}, this.loadLearning.bind(this));
+        //request("https://en.wikipedia.org/wiki/Dunvegan_Cup", {}, this.loadLearning.bind(this));
+        //request("https://en.wikipedia.org/wiki/Vladimir_Putin", {}, this.loadLearning.bind(this));
     }
 }
 

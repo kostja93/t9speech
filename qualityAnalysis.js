@@ -35,8 +35,8 @@ learningEvent.on('ready', function () {
     var testString = learningEvent.learnStrings[0].substr(0, 1000);
     var diff = 0;
     var length = 0;
-    for(var j = 0; j < testString.length; j += 100) {
-        var string = testString.substr(j, 100);
+    for(var j = 0; j < testString.length; j += 10) {
+        var string = testString.substr(j, 10);
         inputTree = new InputTreeBuilder(t9LearningTree);
         var t9Input = t9Mapper.charToT9(string);
 

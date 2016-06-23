@@ -8,6 +8,7 @@ class T9Node {
         this.count = count || 1;
 
         this.prob = 0;
+        this.active = true;
     }
 
     getChild(char) {
@@ -71,6 +72,10 @@ class T9Node {
                 this.parent.deletePath();
         }
     }
+
+    setActive() {this.active = true;}
+    setInActive() {this.active = false;}
+    isActive() {return this.active;}
 }
 
 module.exports = T9Node;
