@@ -27,11 +27,11 @@ learningEvent.on('ready', function () {
             });
 
             inputTree.bestPaths.forEach(function (word) {
-                socket.emit('debug', word);
+                socket.emit('debug', word.word());
             });
 
             inputTree.goodNotes.forEach(function (word) {
-                socket.emit('debug_2', word);
+                socket.emit('debug_2', word.word());
             });
         });
     });
