@@ -42,13 +42,16 @@ class WordTreeBuilder {
                     word = word.substr(word.length - this.depth);
                     condProb = this.probFct.conditionedProbability(word);
                 }
-                if (newLeaf.parent) {
-                    parentProb = newLeaf.parent.prob;
+
+                if (null == treeLeaf.parent) {
+                    parentProb = treeLeaf.prob;
+                } else {
+                    parentProb = this.probFct.realProb(word);
                 }
 
-                newLeaf.prob = parentProb + this.probFct.realProb(word) + condProb;
+                newLeaf.prob = parentProb + condProb;
 
-                if (newLeaf.prob != Infinity && newLeaf != 0) {
+                if (newLeaf.prob != Infinity) {
                     treeLeaf.addChild(newLeaf);
                     this.leafNodes.push(newLeaf);
                 }

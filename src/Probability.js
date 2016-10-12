@@ -40,7 +40,8 @@ class Probability {
     conditionedProbability(string) {
         var condition = Math.exp(-this.realProb(string.substr(0, string.length -1)));
         var prob = Math.exp(-this.realProb(string));
-        return -Math.log( prob / condition);
+        var condProb =  -Math.log( prob) +  Math.log(condition);
+        return condProb;
     }
 }
 
